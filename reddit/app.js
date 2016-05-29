@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose')
 require("./models/Posts")
 require("./models/Comments")
+mongoose.connect('mongodb://localhost/Meddit')
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
