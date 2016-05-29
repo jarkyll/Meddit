@@ -18,7 +18,12 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	.state('posts', {
 		url: "/posts/{id}",
 		templateUrl: "/posts.html",
-		controller: "PostsCtrl"
+		controller: "PostsCtrl",
+		resolve: {
+			post: ['$stateParams', 'posts', function($stateParams, posts){
+				return posts.getComments($stateParams.id)
+			}]
+		}
 	})
 	$urlRouterProvider.otherwise('home')
 }])
@@ -40,6 +45,38 @@ app.factory("posts", ['$http', function($http){
 		})
 	}
 
+	object.create = function(post){
+		return $http.post("/posts", post).success(function(data){
+			object.posts.push(data)
+		})
+	}
+
+	object.upvote = function(post){
+		return $http.put("/posts/" + post._id + "/upvote").success(function(data){
+			// this is because we don't copy that change, but we just added 1 to the post
+			// in the database
+			post.upvotes += 1
+		})
+	}
+
+	object.downvote = function(post){
+		return $http.put("/posts/" + post._id + "/downvote").success(function(data){
+			post.upvotes -= 1
+		})
+	}
+
+	object.getComments = function(id){
+		return $http.get("/posts/" + id).then(function(res){
+			return res.data
+		})
+	}
+
+	object.addComment = function(id, comment){
+		return $http.post("/posts/" + id + "/comments", comment)
+	}
+
+
+
 	return object
 
 }])
@@ -50,50 +87,44 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 	$scope.posts = posts.posts
 
 	$scope.addPost = function() {
-		// mock data
-
-
-		/// === checks for same type and value
 		if(!$scope.title ||  $scope.title === ""){
 			return
 		}
 		else{
-			$scope.posts.push({title: $scope.title, link: $scope.link, upvotes: 0})
+			posts.create({title: $scope.title, link:$scope.link})
 			$scope.title = ""
 			$scope.link = ""
 		}
 	}
 
 	$scope.upvote = function(post){
-		post.upvotes += 1
+		posts.upvote(post)
 	}
 
 	$scope.downvote = function(post){
-		post.upvotes -= 1
+		posts.downvote(post)
 	}
 
 
 }])
 
 
-app.controller("PostsCtrl", ['$scope', '$stateParams', 'posts', function($scope, $stateParams, posts){
-	$scope.post = posts.posts[$stateParams.id]
-	if(!$scope.post.comments){
-			$scope.post.comments = []
-	}
-	else{
-	}
-	$scope.sanity = $stateParams
+app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, posts){
+	$scope.post = post
+
 
 
 	$scope.addComment = function(){
 		if($scope.body === ''){
 			return
 		}
-		$scope.post.comments.push({
+		posts.addComment(post._id, {
 			body: $scope.body,
 			author: 'user',
-			upvotes: 0
+		}).success(function(comment){
+			$scope.post.comments.push(comment)
+			console.log("comment")
+			console.log($scope.post)
 		})
 		$scope.body = ''
 

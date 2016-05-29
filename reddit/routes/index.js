@@ -78,11 +78,16 @@ router.param("comment", function(req, res, next, id){
 })
 
 
-router.get('/posts/:post', function(req, res){
+router.get('/posts/:post', function(req, res, next){
   //middleware function used, so the post obj attached to the
   // req object
   // sends json response
-  res.json(req.post)
+  req.post.populate('comments', function(err, post){
+    if(err){
+      return next(err)
+    }
+    res.json(post)
+  })
 })
 
 // put just modifies data
@@ -115,10 +120,10 @@ router.post('/posts/:post/comments', function(req, res, next){
   comment.post = req.post
   comment.save(function(err, comment){
     if(err){
-      next(err)
+      return next(err)
     }
     req.post.comments.push(comment)
-    req.post.save(function(err, comment){
+    req.post.save(function(err, post){
       if(err){
         next(err)
       }
