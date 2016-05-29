@@ -125,10 +125,10 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, p
 
 
 	$scope.upvote = function(comment){
-		posts.upvote(post, comment)
+		posts.commentUpvote(post, comment)
 	}
 	$scope.downvote = function(comment){
-		posts.downvote(post, comment)
+		posts.commentDownvote(post, comment)
 	}
 	$scope.addComment = function(){
 		if($scope.body === ''){
