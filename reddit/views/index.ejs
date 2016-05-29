@@ -6,7 +6,7 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
     <script src="/javascripts/Angularapp.js"></script>
     <style> .glyphicon-thumbs-down {curser: pointer}
-            .glyphicon-thumbds-up {curser: pointer}
+            .glyphicon-thumbs-up {curser: pointer}
     </style>
   </head>
   <body ng-app="reddit">
@@ -62,8 +62,8 @@
       </div>
 
       <div ng-repeat="comment in post.comments | orderBy: '-upvotes'">
-        <span class="glyphicon glyphicons-thumbs-up" ng-click=upvote(comment)></span>
-        <span class="glyphicon glyphicons-thumbs-down" ng-click=downvote(comment)></span>
+        <span ng-click="upvote(comment)" class="glyphicon glyphicon-thumbs-up"></span>
+        <span ng-click='downvote(comment)' class="glyphicon glyphicon-thumbs-down"></span>
         {{ comment.upvotes }} - by {{ comment.author }}
         <span style="font-size:20px; margin-left:10px;">
           {{ comment.body }}

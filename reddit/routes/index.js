@@ -124,6 +124,9 @@ router.post('/posts/:post/comments', function(req, res, next){
     }
     req.post.comments.push(comment)
     req.post.save(function(err, post){
+      console.log(post)
+      console.log("comment")
+      console.log(comment)
       if(err){
         next(err)
       }

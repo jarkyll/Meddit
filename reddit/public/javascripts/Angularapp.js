@@ -75,6 +75,17 @@ app.factory("posts", ['$http', function($http){
 		return $http.post("/posts/" + id + "/comments", comment)
 	}
 
+	object.commentUpvote = function(post, comment){
+		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/upvote").success(function(data){
+			comment.upvotes += 1
+		})
+	}
+
+	object.commentDownvote = function(post, comment){
+		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/downvote").success(function(data){
+			comment.upvotes -= 1
+		})
+	}
 
 
 	return object
@@ -113,7 +124,12 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, p
 	$scope.post = post
 
 
-
+	$scope.upvote = function(comment){
+		posts.upvote(post, comment)
+	}
+	$scope.downvote = function(comment){
+		posts.downvote(post, comment)
+	}
 	$scope.addComment = function(){
 		if($scope.body === ''){
 			return
