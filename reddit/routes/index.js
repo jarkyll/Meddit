@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 var Post = mongoose.model("Post")
 var Comment = mongoose.model("Comment")
 
-/* GET home page. */
+/* GET home page.  ESSENTIAL FOR THE FRONTEND renders the index.ejs*/
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
