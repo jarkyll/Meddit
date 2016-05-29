@@ -38,7 +38,7 @@
               <span>
                 <a href="#/posts/{{$index}}">Comments</a>
               </span>
-            </span> 
+            </span>
           </div>
 
           <!-- div elements are block elements aka they take up the full width
@@ -52,20 +52,20 @@
               <input type="link" ng-model="link" placeholder="Link"></input>
             </div>
             <button type="submit" class="btn btn-danger">Post</button>
-          </form> 
+          </form>
       </script>
 
       <script type="text/ng-template" id="/posts.html">
         <div class="page-header">
         <h3>
-          <a ng-show="post.link" href="post.link">
+          <a ng-show="post.link" href="{{post.link}}">
             {{ post.title}}
           </a>
           <span ng-hide="post.link">{{ post.title }}</span>
         </h3>
       </div>
 
-      <div ng-repeat="comment in comments | orderBy: '-upvotes'">
+      <div ng-repeat="comment in post.comments | orderBy: '-upvotes'">
         <span class="glyphicon glyphicons-thumbs-up" ng-click=upvote(comment)></span>
         <span class="glyphicon glyphicons-thumbs-down" ng-click=downvote(comment)></span>
         {{ comment.upvotes }} - by {{ comment.author }}
@@ -76,13 +76,13 @@
 
       <form ng-submit="addComment()" style="margin-top:30px;">
         <h3>Add a new comment</h3>
-
         <div class="form-group">
           <input class="form-control" type="text" ng-model="body" placeholder="Comment">
           </input>
         </div>
         <button type='submit' class="btn btn-danger">Post</button>
       </form>
+
       </script>
   </body>
 </html>

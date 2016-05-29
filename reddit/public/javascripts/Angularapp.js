@@ -37,12 +37,7 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 
 	$scope.addPost = function() {
 		// mock data
-		$scope.posts.push({
-		  	title: $scope.title,
-		  	link: $scope.link,
-		 	upvotes: 0,
-		 	comments: [{author: 'Joe', body: 'Cool post!', upvotes: 0},{author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}]
-		});
+
 
 		/// === checks for same type and value
 		if(!$scope.title ||  $scope.title === ""){
@@ -68,20 +63,25 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 
 
 app.controller("PostsCtrl", ['$scope', '$stateParams', 'posts', function($scope, $stateParams, posts){
-	$scope.posts = posts.posts[$stateParams.id]
+	$scope.post = posts.posts[$stateParams.id]
+	if(!$scope.post.comments){
+			$scope.post.comments = []
+	}
+	else{
+	}
 	$scope.sanity = $stateParams
-	
+
 
 	$scope.addComment = function(){
 		if($scope.body === ''){
 			return
 		}
-		$scope.posts.comments.push({
+		$scope.post.comments.push({
 			body: $scope.body,
 			author: 'user',
 			upvotes: 0
 		})
 		$scope.body = ''
+
 	}
 }])
-
