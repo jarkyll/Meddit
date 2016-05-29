@@ -4,11 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require("mongoose")
+//var mongoose = require("mongoose")
 // put this require before connecting and without the .js
-require('./models/Posts')
-require('./models/Comments')
-mongoose.connect("mongodb://localhost/Meddit")
+//require('./models/Posts')
+//require('./models/Comments')
+//mongoose.connect("mongodb://localhost/Meddit")
 var routes = require('./routes/index');
 var users = require('./routes/users');
 

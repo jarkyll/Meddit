@@ -1,11 +1,11 @@
 var express = require('express');
-var mongoose = require('mongoose')
+//var mongoose = require('mongoose')
 var router = express.Router();
 // fetch the model that we called Post
-var Post = mongoose.model('Post')
-var Comment = mongoose.model('Comment')
-
-/* GET home page. */
+//var Post = mongoose.model('Post')
+//var Comment = mongoose.model('Comment')
+/*
+/* GET home page.
 router.get('/posts', function(req, res, next){
   //mongodb function remember
   Post.find(function(err, posts){
@@ -75,11 +75,13 @@ router.param("comment", function(req, res, next, id){
 })
 
 
-router.get('/posts/:post', function(req, res){
-  //middleware function used, so the post obj attached to the
-  // req object
-  // sends json response
-  res.json(req.post)
+router.get('/posts/:post', function(req, res, next){
+  req.post.populate('comment', function(err, post){
+    if(err){
+      return next(err)
+    }
+    res.json(post)
+  })
 })
 
 // put just modifies data
@@ -143,4 +145,5 @@ router.put('/posts/:post/comments/:comment/downvote', function(req, res, next){
     res.json(comment)
   })
 })
+*/
 module.exports = router;

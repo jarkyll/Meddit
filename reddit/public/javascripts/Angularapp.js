@@ -6,7 +6,13 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	.state('home', {
 		url: "/home",
 		templateUrl: "/home.html",
-		controller: "MainCtrl"
+		controller: "MainCtrl",
+		//optional map of dependencies
+		resolve: {
+			postPromise: ['posts', function(posts){
+				return posts.getAll()
+			}]
+		}
 	})
 	.state('posts', {
 		url: "/posts/{id}",
@@ -21,12 +27,18 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
 // factory allows for the data to be used in other controllers
 // remember $scope is not persistent, so if we go out of scope, bye bye data
-app.factory("posts", [function(){
-	var object = {
+app.factory("posts", ['$http', function($http){
+	var obj = {
 		posts: []
 	}
+	obj.getAll = function() {
+		return $http.get('/posts').success(function(data){
+			angular.copy(data, obj.posts)
+			// makes a deep copy of data to obj.posts
+		})
+	}
 
-	return object
+	return obj
 
 }])
 
