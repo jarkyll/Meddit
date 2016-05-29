@@ -64,6 +64,7 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 
 app.controller("PostsCtrl", ['$scope', '$stateParams', 'posts', function($scope, $stateParams, posts){
 	$scope.post = posts.posts[$stateParams.id]
+	// logic needd to created the comments for the post
 	if(!$scope.post.comments){
 			$scope.post.comments = []
 	}
