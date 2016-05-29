@@ -1,4 +1,4 @@
-var app = angular.module("reddit", ['ui-router'])
+var app = angular.module("reddit", ['ui.router'])
 
 
 app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
@@ -8,7 +8,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 		templateUrl: "/home.html",
 		controller: "MainCtrl"
 	})
-
+	.state('posts', {
+		url: "/posts/{id}",
+		templateUrl: "/posts.html",
+		controller: "PostsCtrl"
+	})
 	$urlRouterProvider.otherwise('home')
 }])
 
@@ -32,6 +36,14 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 	$scope.posts = posts.posts
 
 	$scope.addPost = function() {
+		// mock data
+		$scope.posts.push({
+		  	title: $scope.title,
+		  	link: $scope.link,
+		 	upvotes: 0,
+		 	comments: [{author: 'Joe', body: 'Cool post!', upvotes: 0},{author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}]
+		});
+
 		/// === checks for same type and value
 		if(!$scope.title ||  $scope.title === ""){
 			return
@@ -53,3 +65,23 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 
 
 }])
+
+
+app.controller("PostsCtrl", ['$scope', '$stateParams', 'posts', function($scope, $stateParams, posts){
+	$scope.posts = posts.posts[$stateParams.id]
+	$scope.sanity = $stateParams
+	
+
+	$scope.addComment = function(){
+		if($scope.body === ''){
+			return
+		}
+		$scope.posts.comments.push({
+			body: $scope.body,
+			author: 'user',
+			upvotes: 0
+		})
+		$scope.body = ''
+	}
+}])
+
