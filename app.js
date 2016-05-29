@@ -1,15 +1,35 @@
-var app = angular.module("reddit", [])
+var app = angular.module("reddit", ['ui-router'])
 
 
-app.controller("MainCtrl", ['$scope', function($scope){
-	$scope.test = "Hello World"
-	$scope.posts = [
-  { title: 'post 1', upvotes: 10 },
-  { title: 'post 2', upvotes: 1 },
-  { title: 'post 3', upvotes: 3 },
-  { title: 'post 4', upvotes: 4 },
-  { title: 'post 5', upvotes: 7 }
-];
+app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+	$stateProvider
+	.state('home', {
+		url: "/home",
+		templateUrl: "/home.html",
+		controller: "MainCtrl"
+	})
+
+	$urlRouterProvider.otherwise('home')
+}])
+
+
+
+
+// factory allows for the data to be used in other controllers
+// remember $scope is not persistent, so if we go out of scope, bye bye data
+app.factory("posts", [function(){
+	var object = {
+		posts: []
+	}
+
+	return object
+
+}])
+
+
+
+app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
+	$scope.posts = posts.posts
 
 	$scope.addPost = function() {
 		/// === checks for same type and value
