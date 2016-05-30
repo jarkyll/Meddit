@@ -28,6 +28,7 @@ UserSchema.methods.generateJWT = function(){
   var end = new Date(today);
   end.setDate(today.getDate() + 7)
 
+  // this is the payload
   return jwt.sign({
     _id: this._id,
     username: this.username,
