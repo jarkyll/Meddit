@@ -25,8 +25,8 @@ UserSchema.methods.validPassword = function(password){
 UserSchema.methods.generateJWT = function(){
   //token needs to expire after a week
   var today = new Date();
-  var end = new Date(today);
-  end.setDate(today.getDate() + 7)
+  var exp = new Date(today);
+  exp.setDate(today.getDate() + 7)
 
   // this is the payload
   return jwt.sign({

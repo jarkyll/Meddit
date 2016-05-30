@@ -29,6 +29,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 		url: "/register",
 		templateUrl: "/register.html",
 		controller: "AuthCtrl",
+		onEnter:['$state', "auth", function($state, auth){
+			if(auth.isLoggedIn()){
+				$state.go("home")
+			}
+		}]
 	})
 	.state('login', {
 		url: "/login",
@@ -222,9 +227,12 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, p
 
 
 app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state, auth){
-	$scope.user = []
+	$scope.user = {}
+
 	$scope.register = function(){
+		console.log($scope.user)
 		auth.register($scope.user).error(function(error){
+			console.log("failed registering")
 			$scope.error = error
 		}).then(function(){
 			//if there is an error, go to home

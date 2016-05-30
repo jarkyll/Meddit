@@ -161,9 +161,11 @@ router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, n
 
 
 router.post("/register", function(req, res, next){
+  //console.log("res is: ", res.body)
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'})
   }
+
   var user = new User();
   user.username = req.body.username
   user.setPassword(req.body.password)
