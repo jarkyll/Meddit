@@ -9,7 +9,7 @@ var passport = require('passport')
 require("./models/Posts")
 require("./models/Comments")
 require("./models/Users")
-require("./config/password")
+require("./config/passport")
 mongoose.connect('mongodb://localhost/Meddit')
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// key for routing!!!
 app.use('/', routes);
 app.use('/users', users);
 
