@@ -25,6 +25,26 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 			}]
 		}
 	})
+	.state('register', {
+		url: "/register",
+		templateURL: "/register.html",
+		controller: "AuthCtrl",
+		onEnter:['$state', 'auth', function($state, auth){
+			if(auth.isLoggedIn()){
+				$state.go('home')
+			}
+		}]
+	})
+	.state('login', {
+		url: "/login",
+		templateURL: "/login.html",
+		controller: "AuthCtrl",
+		onEnter:['$state', "auth", function($state, auth){
+			if(auth.isLoggedIn()){
+				$state.go("home")
+			}
+		}]
+	})
 	$urlRouterProvider.otherwise('home')
 }])
 
@@ -139,7 +159,7 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 
 
 	auth.login = function(user){
-		return $http,post("/login", user).success(function(data){
+		return $http.post("/login", user).success(function(data){
 			auth.saveToken(data.token)
 		})
 	}
@@ -203,4 +223,26 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, p
 		$scope.body = ''
 
 	}
+}])
+
+
+app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state, auth){
+	$scope.user = []
+	$scope.register = function(){
+		auth.register($scope.user).error(function(error){
+			$scope.error = error
+		}).then(function(){
+			//if there is an error, go to home
+			$state.go("home")
+		})
+	}
+
+	$scope.login = function(){
+		auth.login($scope.user).error(function(error){
+			$scope.error = error
+		}).then(function(){
+			$state.go("home")
+		})
+	}
+
 }])
