@@ -53,7 +53,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
 // factory allows for the data to be used in other controllers
 // remember $scope is not persistent, so if we go out of scope, bye bye data
-app.factory("posts", ['$http', function($http){
+app.factory("posts", ['$http', 'auth', function($http, auth){
 	var object = {
 		posts: []
 	}
@@ -66,13 +66,17 @@ app.factory("posts", ['$http', function($http){
 	}
 
 	object.create = function(post){
-		return $http.post("/posts", post).success(function(data){
+		return $http.post("/posts", post, {
+			headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
 			object.posts.push(data)
 		})
 	}
 
 	object.upvote = function(post){
-		return $http.put("/posts/" + post._id + "/upvote").success(function(data){
+		return $http.put("/posts/" + post._id + "/upvote", null, {
+				headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
 			// this is because we don't copy that change, but we just added 1 to the post
 			// in the database
 			post.upvotes += 1
@@ -80,7 +84,9 @@ app.factory("posts", ['$http', function($http){
 	}
 
 	object.downvote = function(post){
-		return $http.put("/posts/" + post._id + "/downvote").success(function(data){
+		return $http.put("/posts/" + post._id + "/downvote", null, {
+				headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
 			post.upvotes -= 1
 		})
 	}
@@ -92,17 +98,22 @@ app.factory("posts", ['$http', function($http){
 	}
 
 	object.addComment = function(id, comment){
-		return $http.post("/posts/" + id + "/comments", comment)
+		return $http.post("/posts/" + id + "/comments", comment, {
+				headers: {Authorization: "Bearer " + auth.getToken()}
+		})
 	}
 
 	object.commentUpvote = function(post, comment){
-		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/upvote").success(function(data){
+		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/upvote", null, {
+				headers: {Authorization: "Bearer " + auth.getToken()}}).success(function(data){
 			comment.upvotes += 1
 		})
 	}
 
 	object.commentDownvote = function(post, comment){
-		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/downvote").success(function(data){
+		return $http.put("/posts/" + post._id + "/comments/" + comment._id + "/downvote", null, {
+			headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
 			comment.upvotes -= 1
 		})
 	}

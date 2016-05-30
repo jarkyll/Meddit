@@ -28,6 +28,8 @@ router.get('/posts', function(req, res, next){
 
 router.post("/posts", auth, function(req, res, next){
   var post = new Post(req.body)
+  var temp;
+  //issue adding an author in the model if it didn't have one earlier
   post.author = req.payload.username
   // we created a post and have it sent
   // save that post in the database
