@@ -125,9 +125,11 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 	}
 
 	auth.isLoggedIn = function(){
+		//console.log("checking if you are logged in")
 		var token = auth.getToken()
 
 		if(token){
+			//console.log("we got a token")
 			//atob decodes a string of data that has been encoded using base-64 encoding
 			// atob(encodeddata)
 			// ascii to binary
@@ -137,6 +139,7 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 			return payload.exp > Date.now()/1000
 		}
 		else{
+			console.log("you aren't logged in")
 			return false
 		}
 	}

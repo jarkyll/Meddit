@@ -26,13 +26,15 @@ UserSchema.methods.generateJWT = function(){
   //token needs to expire after a week
   var today = new Date();
   var exp = new Date(today);
-  exp.setDate(today.getDate() + 7)
-
+  var num = exp.setDate(today.getDate() + 7)
+  //console.log("exp is set to: ",  num)
+  //console.log(parseInt(exp.getDate()/ 1000))
+  //console.log(exp.getDate())
   // this is the payload
   return jwt.sign({
     _id: this._id,
     username: this.username,
-    exp: parseInt(exp.getDate()/ 1000)
+    exp: num
   }, 'SECRET')
 
 }
