@@ -27,17 +27,12 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	})
 	.state('register', {
 		url: "/register",
-		templateURL: "/register.html",
+		templateUrl: "/register.html",
 		controller: "AuthCtrl",
-		onEnter:['$state', 'auth', function($state, auth){
-			if(auth.isLoggedIn()){
-				$state.go('home')
-			}
-		}]
 	})
 	.state('login', {
 		url: "/login",
-		templateURL: "/login.html",
+		templateUrl: "/login.html",
 		controller: "AuthCtrl",
 		onEnter:['$state', "auth", function($state, auth){
 			if(auth.isLoggedIn()){
@@ -240,6 +235,7 @@ app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state,
 	$scope.login = function(){
 		auth.login($scope.user).error(function(error){
 			$scope.error = error
+			console.log(error)
 		}).then(function(){
 			$state.go("home")
 		})
