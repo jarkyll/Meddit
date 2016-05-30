@@ -26,8 +26,9 @@ router.get('/posts', function(req, res, next){
   });
 });
 
-router.post("/posts", function(req, res, next){
+router.post("/posts", auth, function(req, res, next){
   var post = new Post(req.body)
+  post.author = req.payload.username
   // we created a post and have it sent
   // save that post in the database
   post.save(function(err, post){
@@ -94,7 +95,7 @@ router.get('/posts/:post', function(req, res, next){
 })
 
 // put just modifies data
-router.put('/posts/:post/upvote', function(req, res, next){
+router.put('/posts/:post/upvote', auth, function(req, res, next){
   //remember middleware used so a post obj is attached to the req
   req.post.upvote(function(err, post){
     if(err){
@@ -106,7 +107,7 @@ router.put('/posts/:post/upvote', function(req, res, next){
 //curl -X PUT http://localhost:3000/posts/<POST ID>/upvote
 
 
-router.put('/posts/:post/downvote', function(req, res, next){
+router.put('/posts/:post/downvote', auth, function(req, res, next){
     req.post.downvote(function(err, post){
       if(err){
         return next(err)
@@ -116,11 +117,12 @@ router.put('/posts/:post/downvote', function(req, res, next){
 })
 
 
-router.post('/posts/:post/comments', function(req, res, next){
+router.post('/posts/:post/comments', auth, function(req, res, next){
   // the comment is what is the the request body
   // req.body has parameters aka key-value pairs
   var comment = new Comment(req.body)
   comment.post = req.post
+  comment.author = req.payload.username
   comment.save(function(err, comment){
     if(err){
       return next(err)
@@ -137,7 +139,7 @@ router.post('/posts/:post/comments', function(req, res, next){
 })
 
 
-router.put('/posts/:post/comments/:comment/upvote', function(req, res, next){
+router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next){
   req.comment.upvote(function(err, comment){
     if(err){
       return next(err)
@@ -146,7 +148,7 @@ router.put('/posts/:post/comments/:comment/upvote', function(req, res, next){
   })
 })
 
-router.put('/posts/:post/comments/:comment/downvote', function(req, res, next){
+router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next){
   req.comment.downvote(function(err, comment){
     if(err){
       next(err)
