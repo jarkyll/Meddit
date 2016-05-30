@@ -244,5 +244,14 @@ app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state,
 			$state.go("home")
 		})
 	}
+}])
 
+app.controller("NavCtrl", ['$scope', 'auth', function($scope, auth){
+		//map functions to these names
+		// doing $scope.isLoggedIn = auth.isLoggedIn() means
+		// that you want to execeute the function and save the result
+		// that isn't what I want
+		$scope.isLoggedIn = auth.isLoggedIn
+		$scope.currentUser = auth.currentUser
+		$scope.logout = auth.logout
 }])
