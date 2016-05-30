@@ -186,9 +186,9 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 }])
 
 
-app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
+app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, auth){
 	$scope.posts = posts.posts
-
+	$scope.isLoggedIn = auth.isLoggedIn
 	$scope.addPost = function() {
 		if(!$scope.title ||  $scope.title === ""){
 			return
@@ -211,8 +211,8 @@ app.controller("MainCtrl", ['$scope', 'posts', function($scope, posts){
 
 }])
 
-
-app.controller("PostsCtrl", ['$scope', 'post', 'posts', function($scope, post, posts){
+//posts is the service, post is the object
+app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope, post, posts){
 	$scope.post = post
 
 
