@@ -243,12 +243,12 @@ app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, a
 	}
 
 	$scope.addSubthread = function() {
-		if(!$scope.title || $scope.title === ''){
+		if(!$scope.name || $scope.name === ''){
 			return
 		}
 		else{
-			posts.createSubthread({name: $scope.title})
-			$scope.title = ''
+			posts.createSubthread({name: $scope.name})
+			$scope.name = ''
 		}
 	}
 

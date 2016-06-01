@@ -47,6 +47,20 @@
               </span>
             </span>
           </div>
+          <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
+            <h3> Add a new post </h3>
+            <div class="form-group">
+              <input type="text" ng-model="title" placeholder="Title"></input>
+            </div>
+            <div class="form-group">
+              <input type="link" ng-model="link" placeholder="Link"></input>
+            </div>
+            <button type="submit" class="btn btn-danger">Post</button>
+          </form>
+          <div ng-hide="isLoggedIn()">
+            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
+          </div>
+
           <div class="page-header">
               <h1 style="text-align:center;">
               Subthreads
@@ -73,14 +87,11 @@
           <!-- div elements are block elements aka they take up the full width
           and they make a new line. They are not inline elements. -->
           <form ng-submit="addSubthread()" ng-show="isLoggedIn()" style="margin-top:30px;">
-            <h3> Add a new post </h3>
+            <h3>Create new subthread</h3>
             <div class="form-group">
-              <input type="text" ng-model="title" placeholder="Title"></input>
+              <input type="text" ng-model="name" placeholder="Subthread Name"></input>
             </div>
-            <div class="form-group">
-              <input type="link" ng-model="link" placeholder="Link"></input>
-            </div>
-            <button type="submit" class="btn btn-danger">Post</button>
+            <button type="submit" class="btn btn-danger">Create Subthread</button>
           </form>
           <div ng-hide="isLoggedIn()">
             <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
