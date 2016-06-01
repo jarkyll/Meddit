@@ -13,6 +13,36 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+
+
+//get all of the subthreads
+router.get("/subthreads", function(req, res, next){
+  Subthread.find(function(err, subthreads){
+    if(err){
+      return next(err)
+    }
+    res.json(subthreads)
+  })
+
+})
+
+//create a subthread
+router.post("/subthreads", auth, function(req, res, next){
+  var subthread = new Subthread(req.body)
+  //issue adding an author in the model if it didn't have one earlier
+  subthread.author = req.payload.username
+  // only contains the name of the subthread
+  // we created a post and have it sent
+  // save that post in the database
+  subthread.save(function(err, subthread){
+    if(err){
+      return next(err)
+    }
+    res.json(subthread)
+  });
+});
+
+// gets all the posts
 router.get('/posts', function(req, res, next){
   //mongodb function remember
   Post.find(function(err, posts){
@@ -27,9 +57,9 @@ router.get('/posts', function(req, res, next){
   });
 });
 
+// creating a new post
 router.post("/posts", auth, function(req, res, next){
   var post = new Post(req.body)
-  var temp;
   //issue adding an author in the model if it didn't have one earlier
   post.author = req.payload.username
   // we created a post and have it sent
@@ -41,11 +71,133 @@ router.post("/posts", auth, function(req, res, next){
     res.json(post)
   });
 });
+
+//create a new subthread
+router.post("/subthreads", auth, function(req, res, next){
+  var subthread = new Subthread(req.body)
+  subthread.admin.push(req.payload.username)
+  subthread.save(function(err, subthread){
+    if(err){
+      return(err)
+    }
+    res.json(subthread)
+  })
+})
 //testing
 //post call
 ///curl --data 'title=test&link=http://test.com' http://localhost:3000/posts
 // get call
 ///curl http://localhost:3000/posts
+
+router.get('/posts/:post', function(req, res, next){
+  //middleware function used, so the post obj attached to the
+  // req object
+  // sends json response
+  req.post.populate('comments', function(err, post){
+    if(err){
+      return next(err)
+    }
+    res.json(post)
+  })
+})
+
+router.post('/posts/:post/comments', auth, function(req, res, next){
+  // the comment is what is the the request body
+  // req.body has parameters aka key-value pairs
+  var comment = new Comment(req.body)
+  comment.post = req.post
+  comment.author = req.payload.username
+  comment.save(function(err, comment){
+    if(err){
+      return next(err)
+    }
+    req.post.comments.push(comment)
+    req.post.save(function(err, post){
+      if(err){
+        next(err)
+      }
+      // saved to the post and now send the comment back to the client
+      res.json(comment)
+    })
+  })
+})
+
+// put just modifies data
+router.put('/posts/:post/upvote', auth, function(req, res, next){
+  //remember middleware used so a post obj is attached to the req
+  req.post.upvote(function(err, post){
+    if(err){
+      return next(err)
+    }
+    res.json(post)
+  })
+})
+//curl -X PUT http://localhost:3000/posts/<POST ID>/upvote
+
+router.put('/posts/:post/downvote', auth, function(req, res, next){
+    req.post.downvote(function(err, post){
+      if(err){
+        return next(err)
+      }
+      res.json(post)
+    })
+})
+
+router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next){
+  req.comment.upvote(function(err, comment){
+    if(err){
+      return next(err)
+    }
+    res.json(comment)
+  })
+})
+
+router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next){
+  req.comment.downvote(function(err, comment){
+    if(err){
+      next(err)
+    }
+    res.json(comment)
+  })
+})
+
+// passport auth routing
+//AUTH
+router.post("/register", function(req, res, next){
+  //console.log("res is: ", res.body)
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'})
+  }
+
+  var user = new User();
+  user.username = req.body.username
+  user.setPassword(req.body.password)
+  user.save(function(err){
+    if(err){
+      return next(err)
+    }
+    return res.json({token: user.generateJWT()})
+  })
+})
+
+router.post("/login", function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: "Please fill out all fields"})
+  }
+
+  // this uses the LocalStrategy that we created earlier
+  passport.authenticate('local', function(err, user, info){
+    if(err){
+      return next(err)
+    }
+    if(user){
+      return res.json({token: user.generateJWT()})
+    }
+    else{
+      return res.status(401).json(info)
+    }
+  })(req, res, next)
+})
 
 // whenever a function that uses :post runs,
 // if the post parameter has an id, then it fetches
@@ -77,124 +229,25 @@ router.param("comment", function(req, res, next, id){
       return next(err)
     }
     if(!comment){
-      return next(new Error("can\'t fint comment"))
+      return next(new Error("can\'t find comment"))
     }
     req.comment = comment;
     return next()
   })
 })
 
-
-router.get('/posts/:post', function(req, res, next){
-  //middleware function used, so the post obj attached to the
-  // req object
-  // sends json response
-  req.post.populate('comments', function(err, post){
+router.param("subthread", function(req, res, next, id){
+  var query = Subthread.findById(id);
+  query.exect(function(err, subthread){
     if(err){
       return next(err)
     }
-    res.json(post)
+    if(!subthread){
+      return next(new Error("can\'t find subthread"))
+    }
+    req.subthread = subthread
+    return next()
   })
 })
 
-// put just modifies data
-router.put('/posts/:post/upvote', auth, function(req, res, next){
-  //remember middleware used so a post obj is attached to the req
-  req.post.upvote(function(err, post){
-    if(err){
-      return next(err)
-    }
-    res.json(post)
-  })
-})
-//curl -X PUT http://localhost:3000/posts/<POST ID>/upvote
-
-
-router.put('/posts/:post/downvote', auth, function(req, res, next){
-    req.post.downvote(function(err, post){
-      if(err){
-        return next(err)
-      }
-      res.json(post)
-    })
-})
-
-
-router.post('/posts/:post/comments', auth, function(req, res, next){
-  // the comment is what is the the request body
-  // req.body has parameters aka key-value pairs
-  var comment = new Comment(req.body)
-  comment.post = req.post
-  comment.author = req.payload.username
-  comment.save(function(err, comment){
-    if(err){
-      return next(err)
-    }
-    req.post.comments.push(comment)
-    req.post.save(function(err, post){
-      if(err){
-        next(err)
-      }
-      // saved to the post and now send the comment back to the client
-      res.json(comment)
-    })
-  })
-})
-
-
-router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next){
-  req.comment.upvote(function(err, comment){
-    if(err){
-      return next(err)
-    }
-    res.json(comment)
-  })
-})
-
-router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next){
-  req.comment.downvote(function(err, comment){
-    if(err){
-      next(err)
-    }
-    res.json(comment)
-  })
-})
-
-// passport auth routing
-
-
-router.post("/register", function(req, res, next){
-  //console.log("res is: ", res.body)
-  if(!req.body.username || !req.body.password){
-    return res.status(400).json({message: 'Please fill out all fields'})
-  }
-
-  var user = new User();
-  user.username = req.body.username
-  user.setPassword(req.body.password)
-  user.save(function(err){
-    if(err){
-      return next(err)
-    }
-    return res.json({token: user.generateJWT()})
-  })
-})
-router.post("/login", function(req, res, next){
-  if(!req.body.username || !req.body.password){
-    return res.status(400).json({message: "Please fill out all fields"})
-  }
-
-  // this uses the LocalStrategy that we created earlier
-  passport.authenticate('local', function(err, user, info){
-    if(err){
-      return next(err)
-    }
-    if(user){
-      return res.json({token: user.generateJWT()})
-    }
-    else{
-      return res.status(401).json(info)
-    }
-  })(req, res, next)
-})
 module.exports = router;

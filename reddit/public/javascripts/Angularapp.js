@@ -12,6 +12,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 				// go tho the posts module(factory) and
 				// do the function where we do posts.getall()
 				return posts.getAll()
+			}],
+			subthreadPromise: ['posts', function(posts){
+				return posts.getAllSubthreads()
+			}]
+		}
+	})
+	.state('subthreads', {
+		url: "/subthreads",
+		templateUrl: "/subthreads.html",
+		controller: "PostsCtrl",
+		resolve: {
+			subthreadPromise: ['posts', function(posts){
+				return posts.getAllSubthreads()
 			}]
 		}
 	})
@@ -50,12 +63,20 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
 
 
-
 // factory allows for the data to be used in other controllers
 // remember $scope is not persistent, so if we go out of scope, bye bye data
 app.factory("posts", ['$http', 'auth', function($http, auth){
 	var object = {
-		posts: []
+		posts: [],
+		subthreads: []
+	}
+
+
+	object.getAllSubthreads = function(){
+			return $http.get("/subthreads").success(function(data){
+				angular.copy(data, object.subthreads)
+				// deep copy of the subthreads to scope
+			})
 	}
 
 	object.getAll = function(){
@@ -66,6 +87,7 @@ app.factory("posts", ['$http', 'auth', function($http, auth){
 	}
 
 	object.create = function(post){
+		console.log(post)
 		return $http.post("/posts", post, {
 			headers: {Authorization: "Bearer " + auth.getToken()}
 		}).success(function(data){
@@ -73,6 +95,22 @@ app.factory("posts", ['$http', 'auth', function($http, auth){
 		})
 	}
 
+	object.createSubthread = function(post){
+		return $http.post("/subthreads", post, {
+			headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
+			//push new subthread
+			object.subthreads.push(data)
+		})
+	}
+	/*object.createPost = function(post, subthread){
+		return $http.post("/subthreads", post, subthread {
+			headers: {Authorization: "Bearer " + auth.getToken()}
+		}).success(function(data){
+			object.subthreads.push(data)
+		})
+	}
+	*/
 	object.upvote = function(post){
 		return $http.put("/posts/" + post._id + "/upvote", null, {
 				headers: {Authorization: "Bearer " + auth.getToken()}
@@ -188,7 +226,11 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 
 app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, auth){
 	$scope.posts = posts.posts
+	$scope.subthreads = posts.subthreads
+	console.log($scope.posts)
+	console.log($scope.subthreads)
 	$scope.isLoggedIn = auth.isLoggedIn
+
 	$scope.addPost = function() {
 		if(!$scope.title ||  $scope.title === ""){
 			return
@@ -197,6 +239,16 @@ app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, a
 			posts.create({title: $scope.title, link:$scope.link})
 			$scope.title = ""
 			$scope.link = ""
+		}
+	}
+
+	$scope.addSubthread = function() {
+		if(!$scope.title || $scope.title === ''){
+			return
+		}
+		else{
+			posts.createSubthread({name: $scope.title})
+			$scope.title = ''
 		}
 	}
 
@@ -212,9 +264,9 @@ app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, a
 }])
 
 //posts is the service, post is the object
+//inside a post
 app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope, post, posts){
 	$scope.post = post
-
 
 	$scope.upvote = function(comment){
 		posts.commentUpvote(post, comment)
@@ -227,18 +279,22 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope,
 			return
 		}
 		posts.addComment(post._id, {
-			body: $scope.body,
-			author: 'user',
+			body: $scope.body
 		}).success(function(comment){
 			$scope.post.comments.push(comment)
-			console.log("comment")
-			console.log($scope.post)
 		})
 		$scope.body = ''
 
 	}
 }])
 
+//inside a subthread
+app.controller("SubthreadCtrl", ['$scope', 'auth', 'posts', function($scope, auth, posts){
+	$scope.subthead = subthread //???
+
+
+
+}])
 
 app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state, auth){
 	$scope.user = {}

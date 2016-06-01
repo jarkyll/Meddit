@@ -47,10 +47,32 @@
               </span>
             </span>
           </div>
+          <div class="page-header">
+              <h1 style="text-align:center;">
+              Subthreads
+              </h1>
+          </div>
+          <div ng-repeat= "subthread in subthreads">
+            <span ng-click="upvote(post)" class="glyphicon glyphicon-thumbs-up"></span>
+            <span ng-click="downvote(post)" class='glyphicon glyphicon-thumbs-down'></span>
+            <span> {{subthread.name }} </span>
+            <span style="font-size:20px; margin-left:10px;">
+              <a ng-show="post.link" href={{ post.link }}>
+                {{ post.title }}
+              </a>
+              <span ng-hide="post.link">{{ post.title }}</span>
+              <span ng-show="post.author">
+                  posted by <span>{{ post.author}}</span>
+              </span>
+              <span>
+                <a href="#/posts/{{post._id}}">Comments</a>
+              </span>
+            </span>
+          </div>
 
           <!-- div elements are block elements aka they take up the full width
           and they make a new line. They are not inline elements. -->
-          <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
+          <form ng-submit="addSubthread()" ng-show="isLoggedIn()" style="margin-top:30px;">
             <h3> Add a new post </h3>
             <div class="form-group">
               <input type="text" ng-model="title" placeholder="Title"></input>
@@ -64,6 +86,8 @@
             <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
           </div>
       </script>
+
+
 
       <script type="text/ng-template" id="/posts.html">
         <div class="page-header">
