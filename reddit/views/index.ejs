@@ -71,16 +71,7 @@
             <span ng-click="downvote(post)" class='glyphicon glyphicon-thumbs-down'></span>
             <span> {{subthread.name }} </span>
             <span style="font-size:20px; margin-left:10px;">
-              <a ng-show="post.link" href={{ post.link }}>
-                {{ post.title }}
-              </a>
-              <span ng-hide="post.link">{{ post.title }}</span>
-              <span ng-show="post.author">
-                  posted by <span>{{ post.author}}</span>
-              </span>
-              <span>
-                <a href="#/posts/{{post._id}}">Comments</a>
-              </span>
+              <span>{{ subthread }}</span>
             </span>
           </div>
 

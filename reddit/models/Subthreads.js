@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 
 
 var SubthreadSchema = new mongoose.Schema({
-  admins: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+  admins: [String],
   posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
   name: String,
   members: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]

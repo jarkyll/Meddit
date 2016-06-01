@@ -30,7 +30,9 @@ router.get("/subthreads", function(req, res, next){
 router.post("/subthreads", auth, function(req, res, next){
   var subthread = new Subthread(req.body)
   //issue adding an author in the model if it didn't have one earlier
-  subthread.author = req.payload.username
+  subthread.admins.push(req.payload.username)
+  console.log(subthread)
+  console.log(req.payload.username)
   // only contains the name of the subthread
   // we created a post and have it sent
   // save that post in the database
