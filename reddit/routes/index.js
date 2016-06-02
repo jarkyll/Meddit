@@ -30,9 +30,8 @@ router.get("/subthreads", function(req, res, next){
 router.post("/subthreads", auth, function(req, res, next){
   var subthread = new Subthread(req.body)
   //issue adding an author in the model if it didn't have one earlier
-  subthread.admins.push(req.payload.username)
-  console.log(subthread)
-  console.log(req.payload.username)
+  subthread.admins.push(req.payload._id)
+  subthread.members.push(req.payload._id)
   // only contains the name of the subthread
   // we created a post and have it sent
   // save that post in the database
@@ -63,6 +62,7 @@ router.get('/posts', function(req, res, next){
 router.post("/posts", auth, function(req, res, next){
   var post = new Post(req.body)
   //issue adding an author in the model if it didn't have one earlier
+
   post.author = req.payload.username
   // we created a post and have it sent
   // save that post in the database
@@ -74,17 +74,7 @@ router.post("/posts", auth, function(req, res, next){
   });
 });
 
-//create a new subthread
-router.post("/subthreads", auth, function(req, res, next){
-  var subthread = new Subthread(req.body)
-  subthread.admin.push(req.payload.username)
-  subthread.save(function(err, subthread){
-    if(err){
-      return(err)
-    }
-    res.json(subthread)
-  })
-})
+
 //testing
 //post call
 ///curl --data 'title=test&link=http://test.com' http://localhost:3000/posts
@@ -240,7 +230,7 @@ router.param("comment", function(req, res, next, id){
 
 router.param("subthread", function(req, res, next, id){
   var query = Subthread.findById(id);
-  query.exect(function(err, subthread){
+  query.exec(function(err, subthread){
     if(err){
       return next(err)
     }
