@@ -28,6 +28,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+// link the express static file, and what you want to call it
 app.use(express.static(path.join(__dirname, 'public')));
 
 // key for routing!!!
