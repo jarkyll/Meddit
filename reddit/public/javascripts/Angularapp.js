@@ -21,7 +21,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	.state('subthreads', {
 		url: "/subthreads",
 		templateUrl: "view/subthreads.ejs",
-		controller: "PostsCtrl",
+		controller: "SubthreadsCtrl",
 		resolve: {
 			subthreadPromise: ['posts', function(posts){
 				return posts.getAllSubthreads()
@@ -241,15 +241,6 @@ app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, a
 		}
 	}
 
-	$scope.addSubthread = function() {
-		if(!$scope.name || $scope.name === ''){
-			return
-		}
-		else{
-			posts.createSubthread({name: $scope.name})
-			$scope.name = ''
-		}
-	}
 
 	$scope.upvote = function(post){
 		posts.upvote(post)
@@ -264,7 +255,7 @@ app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, a
 
 //posts is the service, post is the object
 //inside a post
-app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope, post, posts){
+app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope, post, posts, auth){
 	$scope.post = post
 
 	$scope.upvote = function(comment){
@@ -289,10 +280,22 @@ app.controller("PostsCtrl", ['$scope', 'post', 'posts', 'auth', function($scope,
 
 //inside a subthread
 app.controller("SubthreadCtrl", ['$scope', 'auth', 'posts', function($scope, auth, posts){
-	$scope.subthead = subthread //???
 
+}])
 
+app.controller("SubthreadsCtrl", ['$scope', "auth", 'posts', function($scope, auth, posts){
+	$scope.subthreads = posts.subthreads
+	$scope.isLoggedIn = auth.isLoggedIn
 
+	$scope.addSubthread = function() {
+		if(!$scope.name || $scope.name === ''){
+			return
+		}
+		else{
+			posts.createSubthread({name: $scope.name})
+			$scope.name = ''
+		}
+	}
 }])
 
 app.controller("AuthCtrl", ['$scope', '$state', 'auth', function($scope, $state, auth){
