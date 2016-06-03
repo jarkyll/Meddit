@@ -5,7 +5,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	$stateProvider
 	.state('home', {
 		url: "/home",
-		templateUrl: "/home.html",
+		templateUrl: "view/home.ejs",
 		controller: "MainCtrl",
 		resolve: {
 			postPromise: ['posts', function(posts){
@@ -20,7 +20,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	})
 	.state('subthreads', {
 		url: "/subthreads",
-		templateUrl: "/subthreads.html",
+		templateUrl: "view/subthreads.ejs",
 		controller: "PostsCtrl",
 		resolve: {
 			subthreadPromise: ['posts', function(posts){
@@ -30,7 +30,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	})
 	.state('posts', {
 		url: "/posts/{id}",
-		templateUrl: "/posts.html",
+		templateUrl: "view/posts.ejs",
 		controller: "PostsCtrl",
 		resolve: {
 			post: ['$stateParams', 'posts', function($stateParams, posts){
@@ -40,7 +40,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	})
 	.state('register', {
 		url: "/register",
-		templateUrl: "/register.html",
+		templateUrl: "view/register.ejs",
 		controller: "AuthCtrl",
 		onEnter:['$state', "auth", function($state, auth){
 			if(auth.isLoggedIn()){
@@ -50,7 +50,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 	})
 	.state('login', {
 		url: "/login",
-		templateUrl: "/login.html",
+		templateUrl: "view/login.ejs",
 		controller: "AuthCtrl",
 		onEnter:['$state', "auth", function($state, auth){
 			if(auth.isLoggedIn()){
