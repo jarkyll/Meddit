@@ -188,7 +188,6 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 			return payload.exp > Date.now()/1000
 		}
 		else{
-			console.log("you aren't logged in")
 			return false
 		}
 	}
@@ -227,8 +226,8 @@ app.factory("auth", ['$http', "$window", function($http, $window){
 app.controller("MainCtrl", ['$scope', 'posts', 'auth', function($scope, posts, auth){
 	$scope.posts = posts.posts
 	$scope.subthreads = posts.subthreads
-	console.log($scope.posts)
-	console.log($scope.subthreads)
+	//console.log($scope.posts)
+	//bconsole.log($scope.subthreads)
 	$scope.isLoggedIn = auth.isLoggedIn
 
 	$scope.addPost = function() {

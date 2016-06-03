@@ -8,10 +8,45 @@ var User = mongoose.model("User")
 var Subthread = mongoose.model("Subthread")
 var jwt = require('express-jwt')
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'})
+
+
 /* GET home page.  ESSENTIAL FOR THE FRONTEND renders the index.ejs*/
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
+
 });
+
+//delete admin of specific post update
+router.put("/subthreads/:subthread/admins/:user/delete",  auth, function(req, res, next){
+  // we check if the user(payload is in admins), then we check if user is an admins
+  var user = req.payload
+  var target = req.user
+  var subthread = req.subthread
+  if(req.subthread.isAdmin(user)){
+    req.subthread.deleteAdmin(user, function(err, subthread){
+      if(err){
+        return next(err)
+      }
+      res.json(subthread)
+    })
+  }
+  else{
+    //they are not an admin
+  }
+
+})
+
+router.put("/subthreads/:subthread/admins/:user/add", auth, function(req, res, next){
+  var user = req.user
+  var subthread = req.subthread
+  req.subthread.addAdmin(user, function(err, subthread){
+    if(err){
+      return next(err)
+    }
+    res.json(subthread)
+  })
+
+})
 
 
 
@@ -238,6 +273,21 @@ router.param("subthread", function(req, res, next, id){
       return next(new Error("can\'t find subthread"))
     }
     req.subthread = subthread
+    return next()
+  })
+})
+
+router.param("user", function(req, res, next, id){
+  var query = User.findById(id);
+  query.exec(function(err, user){
+    if(err){
+      return next(err)
+    }
+    if(!user){
+      return next(new Error("can\'t find user"))
+    }
+    // the user we get from executing the query
+    req.user = user
     return next()
   })
 })
