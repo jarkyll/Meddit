@@ -19,6 +19,13 @@ CommentSchema.methods.downvote = function(cb){
   this.save(cb)
 }
 
+CommentSchema.methods.deleteComment = function(comment, cb){
+  var id = user._id
+  //check if the comment belongs to a post that belongs to a subthread that
+  // they are an admin for
+
+}
+
 
 
 var Comment = mongoose.model('Comment', CommentSchema)

@@ -15,9 +15,16 @@ SubthreadSchema.methods.isAdmin = function(user){
   return (index > -1)
 }
 
+
+SubthreadSchema.methods.deleteComment = function(comment, cb){
+  var id = user._id
+  //check if the comment belongs to a post that belongs to a subthread that
+  // they are an admin for
+
+}
 SubthreadSchema.methods.addAdmin = function(user, cb){
   var id = user._id
-  console.log("id to be added: " + id)
+  //console.log("id to be added: " + id)
   var index = this.admins.indexOf(id)
   if(index <= -1){
     this.admins.push(id)
